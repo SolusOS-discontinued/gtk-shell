@@ -9,7 +9,7 @@
 extern char **environ; /* defined by libc */
 
 gchar *filename = "background.jpg";
-gchar *terminal_path = "/home/tiago/git/weston/clients/weston-terminal";
+gchar *terminal_path = "/usr/bin/weston-terminal";
 
 struct element {
 	GtkWidget *window;
