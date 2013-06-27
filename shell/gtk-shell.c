@@ -87,43 +87,70 @@ launch_terminal (GtkWidget *widget, gpointer   data)
 }
 
 static void
+update_clock (GtkLabel *label)
+{
+    time_t rawtime;
+    struct tm *info;
+    char buffer[50];
+
+    time( &rawtime );
+
+    info = localtime( &rawtime );
+
+    strftime(buffer,50,"<big>%H:%M:%S</big>", info);
+       
+    gtk_label_set_markup (label, buffer);
+    
+    return TRUE;
+}
+
+static void
 panel_create(struct desktop *desktop)
 {
-	GdkWindow *gdk_window;
-	struct element *panel;
-	GtkWidget *box1, *button;
+    GdkWindow *gdk_window;
+    struct element *panel;
+    GtkWidget *box1, *button;
+    GtkWidget *label;
 
-	panel = malloc(sizeof *panel);
-	memset(panel, 0, sizeof *panel);
+    panel = malloc(sizeof *panel);
+    memset(panel, 0, sizeof *panel);
 
-	panel->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    panel->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-	gtk_window_set_title(GTK_WINDOW(panel->window), "gtk shell");
-	gtk_window_set_decorated(GTK_WINDOW(panel->window), FALSE);
-	gtk_widget_realize(panel->window);
+    gtk_window_set_title(GTK_WINDOW(panel->window), "gtk shell");
+    gtk_window_set_decorated(GTK_WINDOW(panel->window), FALSE);
+    gtk_widget_realize(panel->window);
 
-	box1 = gtk_box_new (FALSE, 0);
-	gtk_container_add (GTK_CONTAINER (panel->window), box1);
+    box1 = gtk_box_new (FALSE, 0);
+    gtk_container_add (GTK_CONTAINER (panel->window), box1);
 
-	button = gtk_button_new_with_label ("launch terminal");
-	g_signal_connect (button, "clicked",
-			  G_CALLBACK (launch_terminal), NULL);
-	gtk_box_pack_start (GTK_BOX(box1), button, TRUE, TRUE, 0);
-	gtk_widget_show (button);
+    button = gtk_button_new_with_label ("launch terminal");
+    g_signal_connect (button, "clicked",
+              G_CALLBACK (launch_terminal), NULL);
+    gtk_box_pack_start (GTK_BOX(box1), button, FALSE, FALSE, 0);
+    gtk_widget_show (button);
 
-	gtk_widget_show (box1);
+    label = gtk_label_new ("Clock goes here");
+    update_clock (label);
+    gtk_label_set_use_markup (GTK_LABEL (label), TRUE);
+    gtk_box_pack_end (GTK_BOX(box1), label, FALSE, FALSE, 0);
+    gtk_widget_show (label);
 
-	gdk_window = gtk_widget_get_window(panel->window);
-	gdk_wayland_window_set_use_custom_surface(gdk_window);
+    gtk_widget_show (box1);
 
-	panel->surface = gdk_wayland_window_get_wl_surface(gdk_window);
-	desktop_shell_set_user_data(desktop->shell, desktop);
-	desktop_shell_set_panel(desktop->shell, desktop->output,
-				panel->surface);
+    g_timeout_add (1000, update_clock, label);
 
-	gtk_widget_show_all(panel->window);
+    gdk_window = gtk_widget_get_window(panel->window);
+    gdk_wayland_window_set_use_custom_surface(gdk_window);
 
-	desktop->panel = panel;
+    panel->surface = gdk_wayland_window_get_wl_surface(gdk_window);
+    desktop_shell_set_user_data(desktop->shell, desktop);
+    desktop_shell_set_panel(desktop->shell, desktop->output,
+                panel->surface);
+
+    gtk_widget_show_all(panel->window);
+
+    desktop->panel = panel;
 }
 
 /* Expose callback for the drawing area */
