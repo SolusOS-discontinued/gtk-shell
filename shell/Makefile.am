@@ -5,6 +5,7 @@ AM_CPPFLAGS = $(CLIENT_CFLAGS) $(GTK_CFLAGS)
 
 weston_desktop_shell_SOURCES =			\
 	gtk-shell.c				\
+	gtk-shell.h             \
 	desktop-shell-client-protocol.h		\
 	desktop-shell-protocol.c
 weston_desktop_shell_LDADD = $(GTK_LIBS)

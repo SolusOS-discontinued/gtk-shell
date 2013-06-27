@@ -4,11 +4,11 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwayland.h>
 
+#include "gtk-shell.h"
 #include "desktop-shell-client-protocol.h"
 
 extern char **environ; /* defined by libc */
 
-gchar *filename = "background.jpg";
 gchar *terminal_path = "/usr/bin/weston-terminal";
 
 struct element {
@@ -27,6 +27,8 @@ struct desktop {
 
 	struct element *background;
 	struct element *panel;
+    
+    GSettings  *background_settings;
 };
 
 static void
@@ -143,21 +145,40 @@ destroy_cb (GObject *object, gpointer data)
 	gtk_main_quit ();
 }
 
+static const char*
+get_background_picture (struct desktop *desktop)
+{
+    const char *uri;
+    GFile *file;
+    char *filename;
+    
+    uri = g_settings_get_string (desktop->background_settings, DESKTOP_PICTURE_KEY);
+    file = g_file_new_for_uri (uri);
+    /* TODO: Query whether the file exists, otherwise return a default blank image */
+    filename = g_file_get_path (file);
+    
+    g_object_unref (file);
+    return filename;
+}
+
 static void
 background_create(struct desktop *desktop)
 {
 	GdkWindow *gdk_window;
 	struct element *background;
+    const char *picture_uri;
 
 	background = malloc(sizeof *background);
 	memset(background, 0, sizeof *background);
 
-	/* TODO: get the "right" directory */
-	background->pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
+	picture_uri = get_background_picture (desktop);
+    
+	background->pixbuf = gdk_pixbuf_new_from_file (picture_uri, NULL);
 	if (!background->pixbuf) {
 		g_message ("Could not load background.");
 		exit (EXIT_FAILURE);
 	}
+    g_free (picture_uri);
 
 	background->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -231,6 +252,8 @@ main(int argc, char *argv[])
 		fprintf(stderr, "failed to get display: %m\n");
 		return -1;
 	}
+    
+    desktop->background_settings = g_settings_new (DESKTOP_BACKGROUND_SCHEMA);
 
 	desktop->registry = wl_display_get_registry(desktop->display);
 	wl_registry_add_listener(desktop->registry,
