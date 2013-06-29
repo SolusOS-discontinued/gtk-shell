@@ -5,7 +5,7 @@
 #include <gdk/gdkwayland.h>
 
 #include "gtk-shell.h"
-#include "desktop-shell-client-protocol.h"
+#include "wayland-desktop-shell-client-protocol.h"
 
 extern char **environ; /* defined by libc */
 
