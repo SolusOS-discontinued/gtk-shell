@@ -13,6 +13,9 @@ struct _ConsortShellPrivate {
     
     struct desktop  *desktop;
     GSettings       *background_settings;
+    
+    PeasEngine      *engine;
+    PeasExtensionSet *extensions;
 };
 
 
@@ -32,6 +35,10 @@ draw_cb (GtkWidget *widget, cairo_t *cr, gpointer data)
 static void
 destroy_cb (GObject *object, gpointer data)
 {
+    ConsortShell *shell;
+    
+    shell = CONSORT_SHELL (data);
+    G_OBJECT_CLASS (consort_shell_parent_class)->dispose (shell);
 	gtk_main_quit ();
 }
 
@@ -76,7 +83,7 @@ background_create(ConsortShell *shell)
 	background->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
 	g_signal_connect (background->window, "destroy",
-			  G_CALLBACK (destroy_cb), NULL);
+			  G_CALLBACK (destroy_cb), shell);
 
 	g_signal_connect (background->window, "draw",
 			  G_CALLBACK (draw_cb), desktop);
@@ -105,6 +112,12 @@ static void consort_shell_init (ConsortShell *object) {
     struct desktop *desktop;
     
     priv->background_settings = g_settings_new (DESKTOP_BACKGROUND_SCHEMA);
+    
+    /* Set up the PeasEngine */
+    priv->engine = peas_engine_get_default ();
+    priv->extensions = peas_extension_set_new (peas_engine_get_default (), PEAS_TYPE_ACTIVATABLE, "object", object, NULL);
+    peas_engine_add_search_path (priv->engine, CONSORT_SHELL_PLUGIN_DIR, CONSORT_SHELL_PLUGIN_DATA_DIR);
+    peas_engine_enable_loader (priv->engine, "python");
     
     desktop = malloc(sizeof *desktop);
     desktop->output = NULL;
@@ -146,6 +159,8 @@ static void consort_shell_finalize (GObject *object) {
     }
     
     g_object_unref (priv->background_settings);
+    g_object_unref (priv->engine);
+    g_clear_object (&priv->extensions);
     
     G_OBJECT_CLASS (consort_shell_parent_class)->finalize (object);
 }

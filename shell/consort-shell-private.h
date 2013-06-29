@@ -7,6 +7,9 @@
 
 #define DESKTOP_PICTURE_KEY       "picture-uri"
 
+#define CONSORT_SHELL_PLUGIN_DIR            "/usr/lib/consort2/plugins"
+#define CONSORT_SHELL_PLUGIN_DATA_DIR       "/usr/share/consort2/plugins"
+
 /* Following functions/etc are ripped from gtk-shell.c */
 struct element {
 	GtkWidget *window;
