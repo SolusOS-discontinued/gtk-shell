@@ -119,6 +119,7 @@ panel_create(struct desktop *desktop)
 
     gtk_window_set_title(GTK_WINDOW(panel->window), "gtk shell");
     gtk_window_set_decorated(GTK_WINDOW(panel->window), FALSE);
+              
     gtk_widget_realize(panel->window);
 
     box1 = gtk_box_new (FALSE, 0);
@@ -148,6 +149,7 @@ panel_create(struct desktop *desktop)
     desktop_shell_set_panel(desktop->shell, desktop->output,
                 panel->surface);
 
+              
     gtk_widget_show_all(panel->window);
 
     desktop->panel = panel;
