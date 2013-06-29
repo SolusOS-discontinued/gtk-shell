@@ -31,6 +31,25 @@ on_extension_removed (PeasExtensionSet *set, PeasPluginInfo *info, PeasExtension
     peas_activatable_deactivate (PEAS_ACTIVATABLE (exten));
 }
 
+void consort_shell_set_panel_window (ConsortShell *shell, gpointer panel_window) {
+    GdkWindow *window;
+    ConsortShellPrivate *priv;
+    struct element *panel;
+    struct desktop *desktop;
+    
+    priv = CONSORT_SHELL_GET_PRIVATE (shell);
+    
+    desktop = priv->desktop;
+    panel = malloc(sizeof *panel);
+    memset(panel, 0, sizeof *panel);
+    
+    window = gtk_widget_get_window (GTK_WINDOW (panel_window));
+    gdk_wayland_window_set_use_custom_surface (window);
+    panel->surface = gdk_wayland_window_get_wl_surface (window);
+    desktop_shell_set_user_data(desktop->shell, desktop);
+    desktop_shell_set_panel(desktop->shell, desktop->output, panel->surface);
+    }
+
 void consort_shell_set_background_window (ConsortShell *shell, gpointer background_window) {
     GdkWindow *window;
     ConsortShellPrivate *priv;

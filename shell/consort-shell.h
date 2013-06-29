@@ -43,4 +43,6 @@ ConsortShell*   consort_shell_new       (void);
 
 void     consort_shell_set_background_window (ConsortShell *shell, gpointer background_window);
 
+void     consort_shell_set_panel_window      (ConsortShell *shell, gpointer panel_window);
+
 #endif /* __CONSORT_SHELL_H__ */

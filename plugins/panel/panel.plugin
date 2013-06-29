@@ -1,0 +1,9 @@
+[Plugin]
+Module=panel
+Name=Consort2 Panel
+Icon=user-home
+Description=Provides the default Consort panel
+Authors=Ikey Doherty <ikey@solusos.com>
+Copyright=Copyright © Ikey Doherty
+Website=http://ng.solusos.com/
+Help=http://ng.solusos.com/
