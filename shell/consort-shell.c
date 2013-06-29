@@ -14,10 +14,23 @@ struct _ConsortShellPrivate {
     struct desktop  *desktop;
     GSettings       *background_settings;
     
-    PeasEngine      *engine;
+    PeasEngine       *engine;
     PeasExtensionSet *extensions;
+    
+    GtkWindow            *plugin_window;
+    PeasGtkPluginManager *plugin_manager;
 };
 
+
+static void
+on_extension_added (PeasExtensionSet *set, PeasPluginInfo *info, PeasExtension *exten, ConsortShell *cs) {
+    peas_activatable_activate (PEAS_ACTIVATABLE (exten));
+}
+
+static void
+on_extension_removed (PeasExtensionSet *set, PeasPluginInfo *info, PeasExtension *exten, ConsortShell *cs) {
+    peas_activatable_deactivate (PEAS_ACTIVATABLE (exten));
+}
 
 /* Expose callback for the drawing area */
 static gboolean
@@ -105,6 +118,15 @@ background_create(ConsortShell *shell)
 	gtk_widget_show_all(background->window);
 }
 
+static GtkWindow * plugin_window_create (ConsortShellPrivate *priv) {
+    GtkWindow *window;
+    
+    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_container_add (GTK_CONTAINER(window), priv->plugin_manager);
+    
+    return window;
+}
+
 /* GObject methods */
 
 static void consort_shell_init (ConsortShell *object) {
@@ -116,8 +138,17 @@ static void consort_shell_init (ConsortShell *object) {
     /* Set up the PeasEngine */
     priv->engine = peas_engine_get_default ();
     priv->extensions = peas_extension_set_new (peas_engine_get_default (), PEAS_TYPE_ACTIVATABLE, "object", object, NULL);
-    peas_engine_add_search_path (priv->engine, CONSORT_SHELL_PLUGIN_DIR, CONSORT_SHELL_PLUGIN_DATA_DIR);
-    peas_engine_enable_loader (priv->engine, "python");
+    peas_engine_add_search_path (priv->engine, CONSORT_SHELL_PLUGIN_DATA_DIR, CONSORT_SHELL_PLUGIN_DIR);
+    peas_engine_enable_loader (priv->engine, "python3");
+    
+    /* Plugin manager */
+    priv->plugin_manager = peas_gtk_plugin_manager_new (priv->engine);
+    priv->plugin_window = plugin_window_create (priv);
+    gtk_window_set_title (priv->plugin_window, "Consort2 Plugin Manager");
+    gtk_widget_show_all (priv->plugin_window);
+    
+    /* Preload any plugins */
+    peas_extension_set_foreach (priv->extensions, (PeasExtensionSetForeachFunc) on_extension_added, object);
     
     desktop = malloc(sizeof *desktop);
     desktop->output = NULL;
