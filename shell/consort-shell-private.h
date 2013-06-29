@@ -3,10 +3,6 @@
 
 #include "wayland-consort-shell-client-protocol.h"
 
-#define DESKTOP_BACKGROUND_SCHEMA "org.gnome.desktop.background"
-
-#define DESKTOP_PICTURE_KEY       "picture-uri"
-
 #define CONSORT_SHELL_PLUGIN_DIR            "/usr/lib/consort2/plugins"
 #define CONSORT_SHELL_PLUGIN_DATA_DIR       "/usr/share/consort2/plugins"
 
@@ -37,9 +33,7 @@ desktop_shell_configure(void *data,
 		int32_t width, int32_t height)
 {
 	struct desktop *desktop = data;
-
-	gtk_widget_set_size_request (desktop->background->window,
-				     width, height);
+    /* Currently unused */
 }
 
 static void

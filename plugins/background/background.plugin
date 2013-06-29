@@ -1,0 +1,9 @@
+[Plugin]
+Module=background
+Name=Consort2 Background Plugin
+Icon=preferences-desktop
+Description=Manages the Consort Desktop Background
+Authors=Ikey Doherty <ikey@solusos.com>
+Copyright=Copyright © Ikey Doherty
+Website=http://ng.solusos.com/
+Help=http://ng.solusos.com/

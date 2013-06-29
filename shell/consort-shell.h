@@ -41,4 +41,6 @@ GType           consort_shell_get_type	() G_GNUC_CONST;
 
 ConsortShell*   consort_shell_new       (void);
 
+void     consort_shell_set_background_window (ConsortShell *shell, gpointer background_window);
+
 #endif /* __CONSORT_SHELL_H__ */
