@@ -3,11 +3,14 @@ project("installer" C)
 cmake_minimum_required(VERSION 2.6)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/ )
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/vala )
 
 find_package(PkgConfig)
 
 Include(Wayland)
 Include(GObjectIntrospection)
+Include (FindVala)
+Include (UseVala)
 
 SET(CMAKE_BUILD_TYPE "Release")
 
