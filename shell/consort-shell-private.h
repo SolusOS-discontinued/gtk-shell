@@ -3,6 +3,10 @@
 
 #include "wayland-consort-shell-client-protocol.h"
 
+#define DESKTOP_BACKGROUND_SCHEMA "org.gnome.desktop.background"
+
+#define DESKTOP_PICTURE_KEY       "picture-uri"
+
 /* Following functions/etc are ripped from gtk-shell.c */
 struct element {
 	GtkWidget *window;
@@ -33,8 +37,6 @@ desktop_shell_configure(void *data,
 
 	gtk_widget_set_size_request (desktop->background->window,
 				     width, height);
-
-	gtk_widget_set_size_request (desktop->panel->window, width, 32);
 }
 
 static void
