@@ -45,8 +45,14 @@ wayland_add_protocol_client(GTK_SHELL_SOURCES
 
 SET (CONSORT_SHELL_SOURCES
     shell/consort-shell.c
-    shell/consort-shell.h)
+    shell/consort-shell.h
+    shell/consort-shell-private.h)
     
+wayland_add_protocol_client(CONSORT_SHELL_SOURCES
+    ${CMAKE_SOURCE_DIR}/protocol/desktop-shell.xml
+    consort-shell
+)
+
 add_executable (wayland-desktop-shell ${GTK_SHELL_SOURCES})
 set_target_properties(wayland-desktop-shell PROPERTIES PREFIX "")
 
@@ -55,12 +61,14 @@ add_executable (consort-shell ${CONSORT_SHELL_SOURCES})
 gobject_introspection(
   FILENAME ConsortShell-0.1.gir
   NSVERSION 0.1
-  INCLUDE GObject-2.0 GLib-2.0 Gio-2.0
+  NAMESPACE ConsortShell
+  INCLUDE GObject-2.0 GLib-2.0 Gio-2.0 Gtk-3.0
   PROGRAM ${CMAKE_BINARY_DIR}/consort-shell
   SCANNER_ARGS --warn-all --add-include-path=${CMAKE_CURRENT_SOURCE_DIR} -I/usr/include/gobject-introspection-1.0
   COMPILER_ARGS "--includedir=${CMAKE_CURRENT_SOURCE_DIR}"
   SOURCES ${CONSORT_SHELL_SOURCES}
-  )
+  QUIET
+)
 
 INSTALL(PROGRAMS wayland-desktop-shell DESTINATION libexec)
 INSTALL(PROGRAMS consort-shell DESTINATION libexec)
