@@ -7,6 +7,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/ )
 find_package(PkgConfig)
 
 Include(Wayland)
+Include(GObjectIntrospection)
 
 SET(CMAKE_BUILD_TYPE "Release")
 
@@ -51,5 +52,21 @@ set_target_properties(wayland-desktop-shell PROPERTIES PREFIX "")
 
 add_executable (consort-shell ${CONSORT_SHELL_SOURCES})
 
+gobject_introspection(
+  FILENAME ConsortShell-0.1.gir
+  NSVERSION 0.1
+  INCLUDE GObject-2.0 GLib-2.0 Gio-2.0
+  PROGRAM ${CMAKE_BINARY_DIR}/consort-shell
+  SCANNER_ARGS --warn-all --add-include-path=${CMAKE_CURRENT_SOURCE_DIR} -I/usr/include/gobject-introspection-1.0
+  COMPILER_ARGS "--includedir=${CMAKE_CURRENT_SOURCE_DIR}"
+  SOURCES ${CONSORT_SHELL_SOURCES}
+  )
+
 INSTALL(PROGRAMS wayland-desktop-shell DESTINATION libexec)
 INSTALL(PROGRAMS consort-shell DESTINATION libexec)
+
+#INSTALL(FILES ${CMAKE_BINARY_DIR}/ConsortShell-0.1.gir DESTINATION ${GOBJECT_INTROSPECTION_GIRDIR})
+#INSTALL(FILES ${CMAKE_BINARY_DIR}/ConsortShell-0.1.typelib DESTINATION ${GOBJECT_INTROSPECTION_TYPELIBDIR})
+  
+INSTALL(FILES ${CMAKE_BINARY_DIR}/ConsortShell-0.1.gir DESTINATION share/gir-1.0/)
+INSTALL(FILES ${CMAKE_BINARY_DIR}/ConsortShell-0.1.typelib DESTINATION lib/girepository-1.0/)
