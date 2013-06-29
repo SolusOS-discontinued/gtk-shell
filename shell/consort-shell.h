@@ -7,6 +7,7 @@
 
 #include <glib.h>
 #include <glib-object.h>
+#include <girepository.h>
 
 #define CONSORT_SHELL_TYPE              (consort_shell_get_type())
 #define CONSORT_SHELL(o)                (G_TYPE_CHECK_INSTANCE_CAST ((o), CONSORT_SHELL_TYPE, ConsortShell))
