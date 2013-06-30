@@ -1,14 +1,22 @@
-# Gtk shell
+# Consort Shell
 
-It's an example how to have a desktop shell client for Weston based on a real
-toolkit.
+This is a fork of Tiago Vignatti's gtk-shell (https://github.com/tiagovignatti)
 
-The idea is that this client and any other based on any toolkit can be
-interchangeable to use with a single desktop plugin like the [weston desktop
-plugin](https://github.com/tiagovignatti/weston-desktop-plugin). Therefore,
-one compositor, with a single desktop plugin can be used as a foundation for
-building different shell UIs based on different graphics toolkits.
+The aim here is to simplify the construction of a basic desktop system that ties in with Weston's desktop shell.
+ConsortShell is actually a client and not a plugin. We provide a very basic system that is merely enough to allow
+non-C plugins to be created quickly and easily.
 
-## More
+All non-static consort_shell functions are exported via GObject Introspection. Plugins may be implemented in any
+language supported by libpeas. You may also offer GTK configuration dialogs through the native procedures available.
 
-http://vignatti.wordpress.com/2013/03/05/ui-customization-on-wayland/
+*Building*
+
+    cmake -DCMAKE_INSTALL_PREFIX=/usr
+    make
+    make install
+    
+*Running*
+
+    export GDK_BACKEND=wayland
+    weston
+    
